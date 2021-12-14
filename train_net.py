@@ -4,28 +4,39 @@ DETR Training Script.
 
 This script is a simplified version of the training script in detectron2/tools.
 """
-import os
-import sys
 import itertools
 import logging
+import os
+import sys
+
 # fmt: off
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 # fmt: on
 
 from typing import Any, Dict, List, Set
 
-import torch
-from torch.nn.parallel import DistributedDataParallel
-
 import detectron2.utils.comm as comm
-from msvit import add_vit_config, FixSizeDatasetMapper
+import torch
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import build_detection_train_loader, build_detection_test_loader
-from detectron2.engine import AMPTrainer, SimpleTrainer, DefaultTrainer, default_argument_parser, default_setup, launch
+from detectron2.data import (
+    build_detection_test_loader,
+    build_detection_train_loader
+)
+from detectron2.engine import (
+    AMPTrainer,
+    DefaultTrainer,
+    SimpleTrainer,
+    default_argument_parser,
+    default_setup,
+    launch
+)
 from detectron2.evaluation import COCOEvaluator, verify_results
 from detectron2.solver.build import maybe_add_gradient_clipping
 from detectron2.utils.logger import setup_logger
+from torch.nn.parallel import DistributedDataParallel
+
+from msvit4od import FixSizeDatasetMapper, add_vit_config
 
 
 class Trainer(DefaultTrainer):
