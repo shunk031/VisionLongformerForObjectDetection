@@ -5,8 +5,8 @@ description = ""
 authors = ["Shunsuke KITADA <shunsuke.kitada.0831@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.8.8"
-detectron2 = {url = "https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.9/detectron2-0.6%2Bcu111-cp38-cp38-linux_x86_64.whl"}
+python = ">=3.8,<3.11"
+detectron2 = {url = "https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/detectron2-0.6%2Bcpu-cp38-cp38-linux_x86_64.whl" }
 torch = "^1.10.0"
 torchvision = "^0.11.1"
 timm = "^0.4.12"
@@ -20,7 +20,12 @@ flake8 = "^4.0.1"
 mypy = "^0.910"
 jupyterlab = "^3.2.5"
 opencv-python = "^4.5.4"
+poethepoet = "^0.11.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+force-cuda11 = "./scripts/force-cuda11.sh"
+

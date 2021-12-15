@@ -1,5 +1,20 @@
-Vision Longformer for Object Detection 
-=======
+# Vision Longformer for Object Detection 
+
+## Setup with Poetry
+
+```sh
+# Install requirements for poetry
+pip install -U pip wheel setuptools poetry
+
+# Install all requirements
+poetry install
+
+# If you use CUDA11+, you should execute the following command
+poetry run poe force-cuda11
+```
+
+---
+
 This project provides the source code for the object detection part of vision longformer paper. It is based on [detectron2](https://github.com/facebookresearch/detectron2).
 
 [Multi-Scale Vision Longformer: A New Vision Transformer for High-Resolution Image Encoding](https://arxiv.org/abs/2103.15358)
