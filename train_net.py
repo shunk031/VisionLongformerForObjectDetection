@@ -19,17 +19,14 @@ import detectron2.utils.comm as comm
 import torch
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import (
-    build_detection_test_loader,
-    build_detection_train_loader
-)
+from detectron2.data import build_detection_test_loader, build_detection_train_loader
 from detectron2.engine import (
     AMPTrainer,
     DefaultTrainer,
     SimpleTrainer,
     default_argument_parser,
     default_setup,
-    launch
+    launch,
 )
 from detectron2.evaluation import COCOEvaluator, verify_results
 from detectron2.solver.build import maybe_add_gradient_clipping
@@ -61,8 +58,10 @@ class Trainer(DefaultTrainer):
         # Build DDP Model with find_unused_parameters to add flexibility.
         if comm.get_world_size() > 1:
             model = DistributedDataParallel(
-                model, device_ids=[comm.get_local_rank()], broadcast_buffers=False,
-                find_unused_parameters=True
+                model,
+                device_ids=[comm.get_local_rank()],
+                broadcast_buffers=False,
+                find_unused_parameters=True,
             )
         self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(
             model, data_loader, optimizer
@@ -108,7 +107,9 @@ class Trainer(DefaultTrainer):
             mapper = FixSizeDatasetMapper(cfg, False)
         else:
             mapper = None
-        return build_detection_test_loader(cfg, mapper=mapper, dataset_name=dataset_name)
+        return build_detection_test_loader(
+            cfg, mapper=mapper, dataset_name=dataset_name
+        )
 
     @classmethod
     def build_optimizer(cls, cfg, model):
@@ -126,7 +127,7 @@ class Trainer(DefaultTrainer):
             for layer_key in cfg.SOLVER.LR_MULTIPLIERS:
                 if layer_key in key:
                     layer_lr_mult = cfg.SOLVER.LR_MULTIPLIERS[layer_key]
-                    if layer_lr_mult==0.0:
+                    if layer_lr_mult == 0.0:
                         value.requires_grad = False
                     else:
                         value.requires_grad = True
@@ -145,7 +146,9 @@ class Trainer(DefaultTrainer):
 
             class FullModelGradientClippingOptimizer(optim):
                 def step(self, closure=None):
-                    all_params = itertools.chain(*[x["params"] for x in self.param_groups])
+                    all_params = itertools.chain(
+                        *[x["params"] for x in self.param_groups]
+                    )
                     torch.nn.utils.clip_grad_norm_(all_params, clip_norm_val)
                     super().step(closure=closure)
 
@@ -185,7 +188,9 @@ def main(args):
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
-        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(cfg.MODEL.WEIGHTS, resume=args.resume)
+        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=args.resume
+        )
         res = Trainer.test(cfg, model)
         if comm.is_main_process():
             verify_results(cfg, res)

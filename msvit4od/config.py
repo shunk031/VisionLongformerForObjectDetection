@@ -12,9 +12,11 @@ def add_vit_config(cfg):
     cfg.MODEL.TRANSFORMER.AVG_POOL = False
 
     cfg.MODEL.TRANSFORMER.MSVIT = CN()
-    cfg.MODEL.TRANSFORMER.MSVIT.ARCH = 'l1,h3,d192,n1,s1,g1,f4,a0_l2,h6,d384,n10,s0,g1,f2,a0_l3,h6,d384,n1,s0,g1,f1,a0'
+    cfg.MODEL.TRANSFORMER.MSVIT.ARCH = (
+        "l1,h3,d192,n1,s1,g1,f4,a0_l2,h6,d384,n10,s0,g1,f2,a0_l3,h6,d384,n1,s0,g1,f1,a0"
+    )
     cfg.MODEL.TRANSFORMER.MSVIT.SHARE_W = True
-    cfg.MODEL.TRANSFORMER.MSVIT.ATTN_TYPE = 'longformerhand'
+    cfg.MODEL.TRANSFORMER.MSVIT.ATTN_TYPE = "longformerhand"
     cfg.MODEL.TRANSFORMER.MSVIT.SHARE_KV = True
     cfg.MODEL.TRANSFORMER.MSVIT.ONLY_GLOBAL = False
     cfg.MODEL.TRANSFORMER.MSVIT.SW_EXACT = 0

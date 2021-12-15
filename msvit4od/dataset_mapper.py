@@ -1,9 +1,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import copy
 import logging
+
 import numpy as np
 import torch
-
 from detectron2.data import detection_utils as utils
 from detectron2.data import transforms as T
 
@@ -43,17 +43,17 @@ class FixSizeDatasetMapper:
             self.crop_gen = [
                 T.ResizeShortestEdge(cfg.INPUT.MIN_SIZE_TRAIN, sample_style="choice"),
                 T.RandomCrop(cfg.INPUT.CROP.TYPE, cfg.INPUT.CROP.SIZE),
-                T.Resize(cfg.INPUT.FIX_SIZE)
+                T.Resize(cfg.INPUT.FIX_SIZE),
             ]
         else:
-            self.crop_gen = [
-                T.Resize(cfg.INPUT.FIX_SIZE)
-            ]
+            self.crop_gen = [T.Resize(cfg.INPUT.FIX_SIZE)]
 
         self.mask_on = cfg.MODEL.MASK_ON
         self.tfm_gens = build_transform_gen(cfg, is_train)
         logging.getLogger(__name__).info(
-            "Full TransformGens used in training: {}, crop: {}".format(str(self.tfm_gens), str(self.crop_gen))
+            "Full TransformGens used in training: {}, crop: {}".format(
+                str(self.tfm_gens), str(self.crop_gen)
+            )
         )
 
         self.img_format = cfg.INPUT.FORMAT
@@ -71,16 +71,16 @@ class FixSizeDatasetMapper:
         image = utils.read_image(dataset_dict["file_name"], format=self.img_format)
         utils.check_image_size(dataset_dict, image)
 
-        image, transforms = T.apply_transform_gens(
-            self.tfm_gens + self.crop_gen, image
-        )
+        image, transforms = T.apply_transform_gens(self.tfm_gens + self.crop_gen, image)
 
         image_shape = image.shape[:2]  # h, w
 
         # Pytorch's dataloader is efficient on torch.Tensor due to shared-memory,
         # but not efficient on large generic data structures due to the use of pickle & mp.Queue.
         # Therefore it's important to use torch.Tensor.
-        dataset_dict["image"] = torch.as_tensor(np.ascontiguousarray(image.transpose(2, 0, 1)))
+        dataset_dict["image"] = torch.as_tensor(
+            np.ascontiguousarray(image.transpose(2, 0, 1))
+        )
 
         if not self.is_train:
             # USER: Modify this if you want to keep them for some reason.
@@ -102,6 +102,6 @@ class FixSizeDatasetMapper:
             ]
             instances = utils.annotations_to_instances(annos, image_shape)
             dataset_dict["instances"] = utils.filter_empty_instances(instances)
-            if len(dataset_dict["instances"])==0:
+            if len(dataset_dict["instances"]) == 0:
                 return None
         return dataset_dict
