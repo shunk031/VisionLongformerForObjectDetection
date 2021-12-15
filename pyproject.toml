@@ -12,8 +12,14 @@ torchvision = "^0.11.1"
 timm = "^0.4.12"
 einops = "^0.3.2"
 scipy = "^1.7.3"
+# msvit4od = { git = "https://github.com/shunk031/VisionLongformerForObjectDetection", branch = "main" }
 
 [tool.poetry.dev-dependencies]
+isort = "^5.10.1"
+flake8 = "^4.0.1"
+mypy = "^0.910"
+jupyterlab = "^3.2.5"
+opencv-python = "^4.5.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
